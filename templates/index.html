@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio-Scanner HUD</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Load a modern monospace font -->
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="hud-container">
+        <!-- Background elements for HUD effect -->
+        <div class="hud-background">
+            <div class="grid-overlay"></div>
+            <div class="scanning-line"></div>
+            <div class="corner top-left"></div>
+            <div class="corner top-right"></div>
+            <div class="corner bottom-left"></div>
+            <div class="corner bottom-right"></div>
+            
+            <!-- Rotating circles -->
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+            <div class="circle circle-3"></div>
+        </div>
+
+        <div class="main-interface">
+            <!-- Left Panel: Data stream & Status -->
+            <div class="panel left-panel">
+                <div class="panel-header">SYS_STATUS</div>
+                <div class="status-bars">
+                    <div class="bar-row"><span class="label">UPLINK</span><div class="bar"><div class="fill" style="width: 85%"></div></div></div>
+                    <div class="bar-row"><span class="label">POWER</span><div class="bar"><div class="fill" style="width: 92%"></div></div></div>
+                    <div class="bar-row"><span class="label">NEURAL</span><div class="bar"><div class="fill" style="width: 100%"></div></div></div>
+                </div>
+                <div class="data-stream" id="data-stream">
+                    > SYSTEM INITIALIZED...<br>
+                    > WAITING FOR TARGET...<br>
+                </div>
+            </div>
+
+            <!-- Center Panel: Camera / Image Display -->
+            <div class="center-panel" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <div class="target-box" id="main-target-box">
+                    <div class="target-bracket tb-tl"></div>
+                    <div class="target-bracket tb-tr"></div>
+                    <div class="target-bracket tb-bl"></div>
+                    <div class="target-bracket tb-br"></div>
+                    
+                    <div class="image-container" id="image-container">
+                        <video id="camera-feed" autoplay playsinline style="display: none; max-width: 100%; max-height: 100%; object-fit: contain; z-index: 2;"></video>
+                        <canvas id="capture-canvas" style="display: none;"></canvas>
+                        <img id="target-image" src="" alt="Target" style="display: none;">
+                        <div id="upload-prompt">
+                            <p>CLICK TO UPLOAD OR START CAMERA</p>
+                            <input type="file" id="image-upload" accept="image/*" capture="environment" style="display: none;">
+                        </div>
+                        <div id="scan-overlay" style="display: none;">
+                            <div class="scan-laser"></div>
+                            <p class="analyzing-text">ANALYZING TARGET...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 3D Globe Container (Hidden by default) -->
+                <div id="globe-container" style="width: 100%; height: 100%; min-height: 450px; display: none;"></div>
+                
+                <div class="controls" id="main-controls">
+                    <button id="btn-camera" class="hud-btn">CAMERA</button>
+                    <button id="btn-upload" class="hud-btn">UPLOAD</button>
+                    <button id="btn-scan" class="hud-btn" disabled>INITIATE SCAN</button>
+                </div>
+                <button id="btn-new-scan" class="hud-btn" style="display: none; width: 100%; max-width: 300px; margin-top: 15px; border-color: #ff0055; color: #ff0055;">INITIALIZE NEW TARGET</button>
+            </div>
+
+            <!-- Right Panel: Results & Wikipedia Info -->
+            <div class="panel right-panel">
+                <div class="panel-header">TARGET_DATA</div>
+                
+                <div id="results-container" style="display: none;">
+                    <div class="data-block">
+                        <div class="data-label">IDENTIFICATION</div>
+                        <div class="data-value highlight" id="res-name">UNKNOWN</div>
+                    </div>
+                    <div class="data-block">
+                        <div class="data-label">CLASS/SPECIES</div>
+                        <div class="data-value" id="res-scientific">---</div>
+                    </div>
+                    <div class="data-block">
+                        <div class="data-label">MATCH CONFIDENCE</div>
+                        <div class="data-value" id="res-confidence">0%</div>
+                    </div>
+                    <div class="data-block">
+                        <div class="data-label">ORIGIN / HABITAT</div>
+                        <div class="data-value" id="res-origin" style="font-size: 0.9rem;">---</div>
+                    </div>
+                    <div class="data-block">
+                        <div class="data-label">DIET</div>
+                        <div class="data-value" id="res-diet" style="font-size: 0.9rem;">---</div>
+                    </div>
+                    <div class="data-block">
+                        <div class="data-label">STATUS</div>
+                        <div class="data-value" id="res-status" style="font-size: 0.9rem;">---</div>
+                    </div>
+                    
+                    <div class="divider"></div>
+                    
+                    <div class="panel-header">WIKI_SUMMARY</div>
+                    <div class="wiki-content" id="wiki-info">
+                        Awaiting scan data...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Globe.gl -->
+    <script src="//unpkg.com/globe.gl"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
